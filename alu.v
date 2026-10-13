@@ -13,7 +13,7 @@ module riscv_alu #(
     output reg                   negative_flag
 );
 
-    // Operation codes simple parameters mein
+    
     localparam ADD  = 4'd0;
     localparam SUB  = 4'd1;
     localparam AND  = 4'd2;
@@ -25,11 +25,11 @@ module riscv_alu #(
     localparam SRL  = 4'd8;
     localparam SRA  = 4'd9;
 
-    // Shift amount (32-bit ke liye sirf last 5 bits chahiye: 0 to 31)
+    
     wire [4:0] shamt;
     assign shamt = b[4:0];
 
-    // Sign bits alag se nikaal liye taaki overflow samajhna aasan ho
+    
     wire a_sign;
     wire b_sign;
     wire res_sign;
@@ -40,7 +40,7 @@ module riscv_alu #(
 
     // Main ALU Operations
     always @(*) begin
-        // Default values taaki unintentional latch na bane
+        
         alu_out    = 0;
         carry_flag = 0;
 
@@ -66,7 +66,7 @@ module riscv_alu #(
             end
 
             SLT: begin
-                // Signed comparison: agar a < b, toh output 1 warna 0
+                
                 if ($signed(a) < $signed(b))
                     alu_out = 1;
                 else
@@ -74,7 +74,7 @@ module riscv_alu #(
             end
 
             SLTU: begin
-                // Unsigned comparison: agar a < b, toh output 1 warna 0
+                
                 if (a < b)
                     alu_out = 1;
                 else
@@ -100,27 +100,27 @@ module riscv_alu #(
         endcase
     end
 
-    // Flags generation (alag se clean block mein)
+    // Flags generation 
     always @(*) begin
-        // 1. Zero Flag: agar result 0 hai toh 1
+        // 1. Zero Flag
         if (alu_out == 0)
             zero_flag = 1'b1;
         else
             zero_flag = 1'b0;
 
-        // 2. Negative Flag: result ka MSB bit
+        // 2. Negative Flag
         negative_flag = res_sign;
 
-        // 3. Overflow Flag: wahi logic jo humne discuss kiya tha
+        // 3. Overflow Flag
         overflow_flag = 1'b0; // default zero
 
         if (alu_ctrl == ADD) begin
-            // Dono same sign ke the par result ka sign alag aa gaya
+            
             if ((a_sign == b_sign) && (res_sign != a_sign))
                 overflow_flag = 1'b1;
         end
         else if (alu_ctrl == SUB) begin
-            // Dono alag sign ke the par result galat sign ka aa gaya
+            
             if ((a_sign != b_sign) && (res_sign != a_sign))
                 overflow_flag = 1'b1;
         end
